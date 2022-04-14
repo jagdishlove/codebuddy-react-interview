@@ -1,71 +1,107 @@
-import React, { useState } from 'react';
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import React, { Fragment, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  username: yup.string().required(),
-  city: yup.string().required(),
-  state: yup.string().required(),
-  zip: yup.string().required(),
-  terms: yup.bool().required().oneOf([true], 'Terms must be accepted'),
-});
+import {
+  Paper,
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Button,
+} from '@material-ui/core';
 
-function SecondForm() {
+const secondForm = ({ setSaveFormData }) => {
+  const strongRegex = new RegExp('^(?=.*[a-z]{2})(?=.*[A-Z]{2})(?=.*[0-9]{2})(?=.*[!@#$%^&*]{2})');
+
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('last Name is required'),
+    Address: Yup.string().required('Address is required'),
+  });
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onSubmit = data => {
+    setSaveFormData(data);
+  };
+
   return (
-    <Formik
-      validationSchema={schema}
-      onSubmit=""
-      initialValues={{
-        firstName: '',
-        lastName: '',
-        address: '',
-      }}
-    >
-      {({ handleSubmit, handleChange, handleBlur, values, touched, isValid, errors }) => (
-        <Form noValidate onSubmit={handleSubmit}>
-          <Row className="mb-3">
-            <Form.Group as={Col} md="4" controlId="validationFormik01">
-              <Form.Label>firstName</Form.Label>
-              <Form.Control
-                type="text"
+    <>
+      <Paper>
+        <Box px={3} py={2}>
+          <Typography variant="h2" align="center" margin="dense">
+            Form
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="firstName"
                 name="firstName"
-                value={values.firstName}
-                onChange={handleChange}
-                isValid={touched.firstName && !errors.firstName}
+                label="text"
+                fullWidth
+                margin="dense"
+                {...register('firstName')}
+                error={!!errors.firstName}
               />
-              <Form.Control.Feedback type="invalid">error</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationFormik02">
-              <Form.Label>lastName </Form.Label>
-              <Form.Control
+              <Typography variant="inherit" color="textSecondary">
+                {errors.firstName?.message}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="lastName"
+                name="lastName"
+                label="lastName"
                 type="text"
-                name="lastName "
-                value={values.lastName}
-                onChange={handleChange}
-                isValid={touched.lastName && !errors.lastName}
+                fullWidth
+                margin="dense"
+                {...register('lastName')}
+                error={!!errors.lastName}
               />
-            </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationFormik02">
-              <Form.Label>lastName </Form.Label>
-              <Form.Control
+              <Typography variant="inherit" color="textSecondary">
+                {errors.lastName?.message}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="Address"
+                name="Address"
+                label="Address"
                 type="text"
-                name="address  "
-                value={values.address}
-                onChange={handleChange}
-                isValid={touched.address && !errors.address}
+                fullWidth
+                margin="dense"
+                {...register('Address')}
+                error={!!errors.Address}
               />
-            </Form.Group>
-            <Button mb="4" type="submit">
-              Submit form
-            </Button>
-          </Row>
-        </Form>
-      )}
-    </Formik>
-  );
-}
+              <Typography variant="inherit" color="textSecondary">
+                {errors.Address?.message}
+              </Typography>
+            </Grid>
+          </Grid>
 
-export default SecondForm;
+          <Box mt={3}>
+            <Button variant="contained" color="primary" onClick={handleSubmit(onSubmit)}>
+              Register
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </>
+  );
+};
+
+export default secondForm;

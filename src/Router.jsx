@@ -1,20 +1,24 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
 import FirstForm from './components/FirstForm';
 import SecondForm from './components/SecondForm';
 import ThirdForm from './components/ThirdForm';
 import Home from './pages/Home';
 import Posts from './pages/Posts';
 
-const Router = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/firstform" element={<FirstForm />} />
-      <Route path="/secondform" element={<SecondForm />} />
-      <Route path="/thirdform" element={<ThirdForm />} />
-      <Route path="/posts" element={<Posts />} />
-    </Routes>
-  </BrowserRouter>
-);
+const Router = () => {
+  const [saveFormData, setSaveFormData] = React.useState([]);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/firstform" element={<FirstForm setSaveFormData={setSaveFormData} />} />
+        <Route path="/secondform" element={<SecondForm setSaveFormData={setSaveFormData} />} />
+        <Route path="/thirdform" element={<ThirdForm setSaveFormData={setSaveFormData} />} />
+        <Route path="/posts" element={<Posts />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default Router;

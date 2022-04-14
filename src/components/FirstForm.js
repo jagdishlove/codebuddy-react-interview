@@ -1,71 +1,96 @@
-import React, { useState } from 'react';
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
-import { Formik } from 'formik';
-import * as yup from 'yup';
+import React, { Fragment, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
-const schema = yup.object().shape({
-  firstName: yup.string().required(),
-  lastName: yup.string().required(),
-  username: yup.string().required(),
-  city: yup.string().required(),
-  state: yup.string().required(),
-  zip: yup.string().required(),
-  terms: yup.bool().required().oneOf([true], 'Terms must be accepted'),
-});
+import {
+  Paper,
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Button,
+} from '@material-ui/core';
 
-function firstForm() {
-  const navigate = useNavigate();
+const firstForm = ({ setSaveFormData }) => {
+  const strongRegex = new RegExp('^(?=.*[a-z]{2})(?=.*[A-Z]{2})(?=.*[0-9]{2})(?=.*[!@#$%^&*]{2})');
 
-  const handleNavigate = () => {
-    navigate('/secondForm');
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().required('Email is required').email('Email is invalid'),
+    password: Yup.string()
+      .required('Password is required')
+      .matches(
+        strongRegex,
+        'Password must be at least 2 Capital, 2 lower, 2 Number and 2 special Character',
+      ),
+  });
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onSubmit = data => {
+    setSaveFormData(data);
   };
 
   return (
-    <Formik
-      validationSchema={schema}
-      onSubmit=""
-      initialValues={{
-        emailId: '',
-        password: '',
-      }}
-    >
-      {({ handleSubmit, handleChange, values, touched, errors }) => (
-        <Form noValidate onSubmit={handleSubmit}>
-          <Row className="mb-3">
-            <Form.Group as={Col} md="4" controlId="validationFormik01">
-              <Form.Label>Email id</Form.Label>
-              <Form.Control
-                type="email"
-                name="emailId"
-                value={values.emailId}
-                onChange={handleChange}
-                isInvalid={!!errors.emailId}
+    <>
+      <Paper>
+        <Box px={3} py={2}>
+          <Typography variant="h2" align="center" margin="dense">
+            Form
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="email"
+                name="email"
+                label="Email"
+                fullWidth
+                margin="dense"
+                {...register('email')}
+                error={!!errors.email}
               />
-              <Form.Control.Feedback type="invalid">{errors.emailId}</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationFormik02">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
+              <Typography variant="inherit" color="textSecondary">
+                {errors.email?.message}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                id="password"
                 name="password"
-                value={values.password}
-                onChange={handleChange}
-                isValid={touched.password && !errors.password}
+                label="Password"
+                type="password"
+                fullWidth
+                margin="dense"
+                {...register('password')}
+                error={!!errors.password}
               />
-            </Form.Group>
-            <Button type="submit">Submit form</Button>
+              <Typography variant="inherit" color="textSecondary">
+                {errors.password?.message}
+              </Typography>
+            </Grid>
+          </Grid>
 
-            <div>
-              <Button type="submit" onClick={() => handleNavigate()}>
-                Save and Next
-              </Button>
-            </div>
-          </Row>
-        </Form>
-      )}
-    </Formik>
+          <Box mt={3}>
+            <Button variant="contained" color="primary" onClick={handleSubmit(onSubmit)}>
+              Save And Next
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </>
   );
-}
+};
 
 export default firstForm;

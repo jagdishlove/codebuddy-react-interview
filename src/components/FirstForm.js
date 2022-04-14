@@ -17,6 +17,7 @@ import {
 
 const firstForm = ({ setSaveFormData }) => {
   const strongRegex = new RegExp('^(?=.*[a-z]{2})(?=.*[A-Z]{2})(?=.*[0-9]{2})(?=.*[!@#$%^&*]{2})');
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -38,7 +39,9 @@ const firstForm = ({ setSaveFormData }) => {
   });
 
   const onSubmit = data => {
-    setSaveFormData(data);
+    // setSaveFormData(data);
+    localStorage.setItem('data', JSON.stringify(data));
+    navigate('/secondForm');
   };
 
   return (

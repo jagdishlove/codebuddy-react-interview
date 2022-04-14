@@ -12,9 +12,18 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/firstform" element={<FirstForm setSaveFormData={setSaveFormData} />} />
-        <Route path="/secondform" element={<SecondForm setSaveFormData={setSaveFormData} />} />
-        <Route path="/thirdform" element={<ThirdForm setSaveFormData={setSaveFormData} />} />
+        <Route
+          path="/firstform"
+          element={<FirstForm saveFormData={saveFormData} setSaveFormData={setSaveFormData} />}
+        />
+        <Route
+          path="/secondform"
+          element={<SecondForm saveFormData={saveFormData} setSaveFormData={setSaveFormData} />}
+        />
+        <Route
+          path="/thirdform"
+          element={<ThirdForm saveFormData={saveFormData} setSaveFormData={setSaveFormData} />}
+        />
         <Route path="/posts" element={<Posts />} />
       </Routes>
     </BrowserRouter>

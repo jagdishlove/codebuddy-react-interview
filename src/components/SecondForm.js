@@ -2,6 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Paper,
@@ -15,12 +16,15 @@ import {
 } from '@material-ui/core';
 
 const secondForm = ({ setSaveFormData }) => {
-  const strongRegex = new RegExp('^(?=.*[a-z]{2})(?=.*[A-Z]{2})(?=.*[0-9]{2})(?=.*[!@#$%^&*]{2})');
-
+  const navigate = useNavigate();
   const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required('First Name is required'),
-    lastName: Yup.string().required('last Name is required'),
-    Address: Yup.string().required('Address is required'),
+    firstName: Yup.string()
+      .min(2, 'minimum 2 character')
+      .max(50, 'maximum 50 character')
+      .required('Please enter the required field')
+      .matches(/^[aA-zZ\s]+$/, 'Only alphabets are allowed for this field '),
+    lastName: Yup.string(),
+    Address: Yup.string().min(10, 'min 10 character required').required('Address is required'),
   });
 
   const {
@@ -33,7 +37,8 @@ const secondForm = ({ setSaveFormData }) => {
   });
 
   const onSubmit = data => {
-    setSaveFormData(data);
+    localStorage.setItem('data', JSON.stringify(data));
+    navigate('/thirdForm');
   };
 
   return (
@@ -49,7 +54,7 @@ const secondForm = ({ setSaveFormData }) => {
                 required
                 id="firstName"
                 name="firstName"
-                label="text"
+                label="First name"
                 fullWidth
                 margin="dense"
                 {...register('firstName')}
